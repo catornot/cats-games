@@ -14,34 +14,37 @@ try:
 except:
     port = 80
 
-class Client:
+# put_button("label", onclick=self.callback, color="primary", small=False, link_style=False, outline=True)
+# put_button('ok2', onclick=self.callback)
+# put_button('ok1', onclick=self.callback)
+
+class Main_Menu:
     def __init__(self):
         self._run = True
-        self.screen = 0
-        self.counter = 0
 
-    def callback(self):
-        self.var.reset()
-        self.counter += 1
-        self.var.append("click " + str(self.counter))
+    def to_24(self):
+        pass
 
     def mainMenu(self):
-        self.var = output("")
-        put_scrollable(self.var)
+        put_image(PIL.Image.open("white.png"), format="png")
         put_row([
-            put_image(PIL.Image.open("24.png"), format="png", title='', width="100", height="100").onclick(self.callback).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
-            put_button("label", onclick=self.callback, color="primary",
-                       small=False, link_style=False, outline=True),
-            put_button('ok2', onclick=self.callback),
-            put_button('ok1', onclick=self.callback),
-        ], size=50)
+            put_image(PIL.Image.open("24.png"), format="png", title='24 games', width="100", height="100").onclick(self.to_24).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+        ], size=10)
+
+        put_row([
+            put_text("24 games"),
+            put_text("24 games"),
+            put_text("24 games"),
+        ], size=10)
+
     def run(self):
-        set_env(title='clicking')
-        if self.screen == 0:
-            self.mainMenu()
+        self.mainMenu()
 
 
-client=Client()
+def start_main_menu():
+    set_env(title='clicking')
+    main_menu=Main_Menu()
+    main_menu.run()
 
 if __name__ == '__main__':
-    start_server(client.run, port=port)
+    start_server(start_main_menu, port=port)

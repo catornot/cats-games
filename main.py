@@ -6,7 +6,13 @@ from pywebio.output import output as output
 
 import PIL
 import asyncio
+import sys
 
+try:
+    print(sys.argv[1])
+    port = sys.argv[1]
+except:
+    port = 80
 
 class Client:
     def __init__(self):
@@ -38,4 +44,4 @@ class Client:
 client=Client()
 
 if __name__ == '__main__':
-    start_server(client.run, port=80)
+    start_server(client.run, port=port)

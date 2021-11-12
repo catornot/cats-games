@@ -28,8 +28,10 @@ class Account_Manager:
             if not infomation[data["nickname"]][1] == data["password"]:
                 return ("password","wrong password")
             else:
-                clear()
-                start_main_menu()
+                setcookie("nickname",data["nickname"],days = 1)
+                run_js("location.reload(true);")
+                # clear()
+                # start_main_menu()
         else:
             return ("nickname","wrong nickname")
 
@@ -60,7 +62,7 @@ class login_Screen:
 
     def run_signup(self):
         put_markdown("Already have account?, Sign in!").onclick(self.to_login)
-        data = input_group("Sign in",[
+        data = input_group("Sign up",[
             input('Input your nickname', name='nickname'),
             input('Input your email', name='email'),
             input('Input your password', name='password', type=PASSWORD)
@@ -154,7 +156,9 @@ def _start_server():
         return null;
     }
     """)
-    setcookie("nickname","Guest",days = 0.5)
+    if getcookie("nickname") == None:
+        setcookie("nickname","Guest",days = 0.5)
+    print(getcookie("nickname"))
     start_main_menu()
 
 

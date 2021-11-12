@@ -1,6 +1,6 @@
 from pywebio.output import *
 from pywebio.input import *
-from pywebio.session import set_env, go_app
+from pywebio.session import set_env, run_js
 from pywebio import start_server
 from pywebio.output import output as output
 
@@ -108,6 +108,34 @@ class Main_Menu:
         ], size=10)
 
 account_manager = Account_Manager()
+
+run_js("""
+window.setCookie = function(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+window.getCookie = function(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+""")
+
+def setcookie(key, value, days=0):
+    run_js("setCookie(key, value, days)", key=key, value=value, days=days)
+
+def getcookie(key):
+    return eval_js("getCookie(key)", key=key)
 
 def start_main_menu():
     set_env(title='clicking')

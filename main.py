@@ -1,6 +1,6 @@
 from pywebio.output import *
 from pywebio.input import *
-from pywebio.session import set_env, run_js
+from pywebio.session import set_env, run_js,eval_js
 from pywebio import start_server
 from pywebio.output import output as output
 
@@ -97,7 +97,12 @@ class Main_Menu:
     def run(self):
         put_row([
         put_image(PIL.Image.open("cover.png"), format="png"),
-        put_button('sign in', onclick=self.to_signin)
+
+        put_column(
+            put_button('sign in', onclick=self.to_signin),
+            put_text("sign in as {0}".format(getcookie("nickname")))
+            )
+
         ], size=10)
         put_row([
             put_image(PIL.Image.open("24.png"), format="png", title='24 games', width="100", height="100").onclick(self.to_24).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
@@ -108,28 +113,6 @@ class Main_Menu:
         ], size=10)
 
 account_manager = Account_Manager()
-
-run_js("""
-window.setCookie = function(name,value,days) {
-    var expires = "";
-    if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
-window.getCookie = function(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-""")
 
 def setcookie(key, value, days=0):
     run_js("setCookie(key, value, days)", key=key, value=value, days=days)
@@ -149,6 +132,31 @@ def start_signin():
     login_screen=login_Screen()
     login_screen.run_login()
 
+def _start_server():
+    run_js("""
+    window.setCookie = function(name,value,days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+    window.getCookie = function(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+    """)
+    setcookie("nickname","Guest",days = 0.5)
+    start_main_menu()
+
 
 if __name__ == '__main__':
-    start_server(start_main_menu, port=port)
+    start_server(_start_server, port=port)

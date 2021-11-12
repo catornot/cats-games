@@ -29,29 +29,43 @@ class Account_Manager:
                 return ("password","wrong password")
             else:
                 clear()
-                start_main_menu(nickname=data["nickname"])
+                start_main_menu()
         else:
             return ("nickname","wrong nickname")
 
-    def signup_validate(self,nickname,email,password):
+    def signup_validate(self,data):
         with open("info.txt","rb") as info:
             infomation = pickle.load(info)
-            infomation[nickname] = [email,password,nickname]
-        with open("info.txt","wb") as info:
-            pickle.dump(infomation,info)
+
+        if not data["nickname"] in infomation.keys():
+            infomation[data["nickname"]] = [data["email"],data["password"],data["nickname"]]
+            with open("info.txt","wb") as info:
+                pickle.dump(infomation,info)
+        else:
+            return ("nickname", "nickname already exist" )
 
 class login_Screen:
     def to_signup(self):
         clear()
         self.run_signup()
+    def to_login(self):
+        clear()
+        self.run_login()
     def run_login(self):
         put_markdown("No account?, Sign up!").onclick(self.to_signup)
         data = input_group("Sign in",[
             input('Input your nickname', name='nickname'),
             input('Input your password', name='password', type=PASSWORD)
-        ], validate=account_manager.login_validate,cancelable=False)
+        ], validate=account_manager.login_validate)
+
     def run_signup(self):
-        pass
+        put_markdown("Already have account?, Sign in!").onclick(self.to_login)
+        data = input_group("Sign in",[
+            input('Input your nickname', name='nickname'),
+            input('Input your email', name='email'),
+            input('Input your password', name='password', type=PASSWORD)
+        ], validate=account_manager.signup_validate)
+        self.to_login()
 
 class Select_24_game:
     def to_tournement(self):
@@ -95,12 +109,12 @@ class Main_Menu:
 
 account_manager = Account_Manager()
 
-def start_main_menu(nickname="guest"):
+def start_main_menu():
     set_env(title='clicking')
     main_menu=Main_Menu()
     main_menu.run()
 
-def start_select_24_game(nickname="guest"):
+def start_select_24_game():
     select_24_game=Select_24_game()
     select_24_game.run()
 def start_signin():

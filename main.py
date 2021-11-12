@@ -25,10 +25,10 @@ class Account_Manager:
         with open("info.txt","rb") as info:
             infomation = pickle.load(info)
         if data["nickname"] in infomation.keys():
-            if not infomation[data["nickname"]][1] == data["password"]:
+            if not infomation[data["nickname"]][1] == data["password"].encode():
                 return ("password","wrong password")
             else:
-                setcookie("nickname",data["nickname"],days = 1)
+                setcookie("nickname",data["nickname"],days = 0.1)
                 run_js("location.reload(true);")
                 # clear()
                 # start_main_menu()
@@ -40,7 +40,7 @@ class Account_Manager:
             infomation = pickle.load(info)
 
         if not data["nickname"] in infomation.keys():
-            infomation[data["nickname"]] = [data["email"],data["password"],data["nickname"]]
+            infomation[data["nickname"]] = [data["email"],data["password"].encode(),data["nickname"]]
             with open("info.txt","wb") as info:
                 pickle.dump(infomation,info)
         else:
@@ -157,7 +157,7 @@ def _start_server():
     }
     """)
     if getcookie("nickname") == None:
-        setcookie("nickname","Guest",days = 0.5)
+        setcookie("nickname","Guest",days = 0.1)
     print(getcookie("nickname"))
     start_main_menu()
 

@@ -72,11 +72,15 @@ class login_Screen:
     def to_login(self):
         clear()
         self.run_login()
+    def to_menu(self):
+        run_js("location.reload(true);")
+
     def run_login(self):
         put_markdown("No account?, Sign up!").onclick(self.to_signup)
+        put_markdown("Back").onclick(self.to_menu)
         data = input_group("Sign in",[
             input('Input your nickname', name='nickname'),
-            input('Input your password', name='password', type=PASSWORD)
+            input('Input your password', name='password', type=PASSWORD),
         ], validate=account_manager.login_validate)
 
     def run_signup(self):
@@ -84,7 +88,7 @@ class login_Screen:
         data = input_group("Sign up",[
             input('Input your nickname', name='nickname'),
             input('Input your email', name='email'),
-            input('Input your password', name='password', type=PASSWORD)
+            input('Input your password', name='password', type=PASSWORD),
         ], validate=account_manager.signup_validate)
         self.to_login()
 
@@ -118,10 +122,13 @@ class Main_Menu:
         start_signin()
 
     def run(self):
+        if getcookie("nickname") == "Guest":
+            text = 'sign in'
+        else:
+            text = 'signed in as {0}'.format(getcookie("nickname"))
         put_row([
         put_image(PIL.Image.open("cover.png"), format="png"),
-        put_button('sign in', onclick=self.to_signin),
-        put_button("signed in as {0}".format(getcookie("nickname")), onclick=self.ignore, color="primary", small=True, link_style=True, outline=False),
+        put_button(text, onclick=self.to_signin),
 
         ], size=10)
         put_row([

@@ -8,6 +8,8 @@ import PIL
 import asyncio
 import sys
 import pickle
+import base64
+import re
 
 try:
     print(sys.argv[1])
@@ -19,13 +21,18 @@ except:
 # put_button('ok2', onclick=self.callback)
 # put_button('ok1', onclick=self.callback)
 class Account_Manager:
-    def __init__(self):
-        pass
+    def check_email(self,email):
+        regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+        if(re.search(regex,email)):   
+            return True 
+        else:   
+            return False
+
     def login_validate(self,data):
         with open("info.txt","rb") as info:
             infomation = pickle.load(info)
         if data["nickname"] in infomation.keys():
-            if not infomation[data["nickname"]][1] == data["password"].encode():
+            if not infomation[data["nickname"]][1] == base64.standard_b64encode(data["password"].encode()):
                 return ("password","wrong password")
             else:
                 setcookie("nickname",data["nickname"],days = 0.1)
@@ -39,12 +46,24 @@ class Account_Manager:
         with open("info.txt","rb") as info:
             infomation = pickle.load(info)
 
-        if not data["nickname"] in infomation.keys():
-            infomation[data["nickname"]] = [data["email"],data["password"].encode(),data["nickname"]]
-            with open("info.txt","wb") as info:
-                pickle.dump(infomation,info)
+        if not data["nickname"] in infomation.keys() and data["nickname"] != "":
+            if self.check_email(data["email"]):
+                infomation[data["nickname"]] = [data["email"],base64.standard_b64encode(data["password"].encode()),data["nickname"]]
+                with open("info.txt","wb") as info:
+                    pickle.dump(infomation,info)
+            else:
+                return ("email", "email is not formated right" )
+
         else:
-            return ("nickname", "nickname already exist" )
+            return ("nickname", "nickname already exist or wrong formating" )
+
+    def account_exist(self,nickname):
+        with open("info.txt","rb") as info:
+            infomation = pickle.load(info)
+        if nickname in infomation.keys():
+            return True
+        else:
+            return False
 
 class login_Screen:
     def to_signup(self):
@@ -89,6 +108,8 @@ class Select_24_game:
         ], size=10)
 
 class Main_Menu:
+    def ignore(self):
+        pass
     def to_24(self):
         clear()
         start_select_24_game()
@@ -99,11 +120,8 @@ class Main_Menu:
     def run(self):
         put_row([
         put_image(PIL.Image.open("cover.png"), format="png"),
-
-        put_column(
-            put_button('sign in', onclick=self.to_signin),
-            put_text("sign in as {0}".format(getcookie("nickname")))
-            )
+        put_button('sign in', onclick=self.to_signin),
+        put_button("signed in as {0}".format(getcookie("nickname")), onclick=self.ignore, color="primary", small=True, link_style=True, outline=False),
 
         ], size=10)
         put_row([
@@ -115,6 +133,9 @@ class Main_Menu:
         ], size=10)
 
 account_manager = Account_Manager()
+
+# with open("info.txt","wb") as info:
+#     pickle.dump({},info)
 
 def setcookie(key, value, days=0):
     run_js("setCookie(key, value, days)", key=key, value=value, days=days)
@@ -158,7 +179,10 @@ def _start_server():
     """)
     if getcookie("nickname") == None:
         setcookie("nickname","Guest",days = 0.1)
-    print(getcookie("nickname"))
+    elif not account_manager.account_exist(getcookie("nickname")):
+        print("no account found :{0}".format(getcookie("nickname")))
+        setcookie("nickname","Guest",days = 0.1)
+
     start_main_menu()
 
 

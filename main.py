@@ -121,6 +121,9 @@ class Main_Menu:
         clear()
         start_signin()
 
+    def tf(self):
+        run_js("open('https://www.youtube.com/watch?v=Lu0GP-hVVhE&list=PL3sUUzxRCQq0xqRF8V78WqYsmwouE6j_s&index=1');")
+
     def run(self):
         if getcookie("nickname") == "Guest":
             text = 'sign in'
@@ -138,6 +141,8 @@ class Main_Menu:
         put_row([
             put_text("24 games"),
         ], size=10)
+        put_image(PIL.Image.open("white.png"), format="png", width="10", height="200")
+        put_text("Stand by for Titanfall!").onclick(self.tf)
 
 account_manager = Account_Manager()
 

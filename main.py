@@ -144,7 +144,7 @@ class Main_Menu:
         start_signin()
 
     def tf(self):
-        run_js("open('https://www.youtube.com/watch?v=Lu0GP-hVVhE&list=PL3sUUzxRCQq0xqRF8V78WqYsmwouE6j_s&index=1');")
+        run_js("open('https://www.youtube.com/watch?v=j7niWUth9_Y');")
 
     def run(self):
         if getcookie("nickname") == "Guest":

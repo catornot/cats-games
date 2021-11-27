@@ -18,10 +18,6 @@ try:
 except:
     port = 80
 
-# put_button("label", onclick=self.callback, color="primary", small=False, link_style=False, outline=True)
-# put_button('ok2', onclick=self.callback)
-# put_button('ok1', onclick=self.callback)
-
 
 class Account_Manager:
     def check_email(self, email):
@@ -69,107 +65,111 @@ class Account_Manager:
         else:
             return False
 
+#login and sign up page
+def to_signup():
+    clear()
+    run_signup()
 
-class login_Screen:
-    def to_signup(self):
-        clear()
-        self.run_signup()
+def to_login():
+    clear()
+    run_login()
 
-    def to_login(self):
-        clear()
-        self.run_login()
+def to_menu():
+    run_js("location.reload(true);")
 
-    def to_menu(self):
-        run_js("location.reload(true);")
+def run_login():
+    put_markdown("No account?, Sign up!").onclick(to_signup)
+    put_markdown("Back").onclick(to_menu)
+    data = input_group("Sign in", [
+        input('Input your nickname', name='nickname'),
+        input('Input your password', name='password', type=PASSWORD),
+    ], validate=account_manager.login_validate)
 
-    def run_login(self):
-        put_markdown("No account?, Sign up!").onclick(self.to_signup)
-        put_markdown("Back").onclick(self.to_menu)
-        data = input_group("Sign in", [
-            input('Input your nickname', name='nickname'),
-            input('Input your password', name='password', type=PASSWORD),
-        ], validate=account_manager.login_validate)
-
-    def run_signup(self):
-        put_markdown("Already have account?, Sign in!").onclick(self.to_login)
-        data = input_group("Sign up", [
-            input('Input your nickname', name='nickname'),
-            input('Input your email', name='email'),
-            input('Input your password', name='password', type=PASSWORD),
-        ], validate=account_manager.signup_validate)
-        self.to_login()
-
-
-class T_24:
-    def run_train(self):
-        get_random()
+def run_signup():
+    put_markdown("Already have account?, Sign in!").onclick(to_login)
+    data = input_group("Sign up", [
+        input('Input your nickname', name='nickname'),
+        input('Input your email', name='email'),
+        input('Input your password', name='password', type=PASSWORD),
+    ], validate=account_manager.signup_validate)
+    to_login()
 
 
-class Select_24_game:
-    def to_tournement(self):
-        pass
-
-    def to_traning(self):
-        clear()
-        start_train_24()
-
-    def run(self):
-        put_image(PIL.Image.open("white.png"),
-                  format="png", width="100", height="100")
-        put_row([
-            put_image(PIL.Image.open("24_t.png"), format="png", title='', width="100", height="100").onclick(
-                self.to_tournement).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
-            put_image(PIL.Image.open("24_training.png"), format="png", title='', width="100", height="100").onclick(
-                self.to_traning).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
-        ], size=10)
-
-        put_image(PIL.Image.open("white.png"),
-                  format="png", width="10", height="10")
-        put_row([
-            put_text("Tournament"),
-            put_text("Training"),
-        ], size=10)
+#training page
+def run_train():
+    h = get_random()
 
 
-class Main_Menu:
-    def ignore(self):
-        pass
+#selector for 24 games
+def to_tournement():
+    pass
 
-    def to_24(self):
-        clear()
-        start_select_24_game()
+def to_traning():
+    clear()
+    start_train_24()
 
-    def to_signin(self):
-        clear()
-        start_signin()
+def run_select_24_game():
+    put_image(PIL.Image.open("white.png"),
+              format="png", width="100", height="100")
+    put_row([
+        put_image(PIL.Image.open("24_t.png"), format="png", title='', width="100", height="100").onclick(
+            to_tournement).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+        put_image(PIL.Image.open("24_training.png"), format="png", title='', width="100", height="100").onclick(
+            to_traning).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+    ], size=10)
 
-    def tf(self):
-        run_js("open('https://www.youtube.com/watch?v=j7niWUth9_Y');")
-
-    def run(self):
-        if getcookie("nickname") == "Guest":
-            text = 'sign in'
-        else:
-            text = 'signed in as {0}'.format(getcookie("nickname"))
-        put_row([
-            put_image(PIL.Image.open("cover.png"), format="png"),
-            put_button(text, onclick=self.to_signin),
-
-        ], size=10)
-        put_row([
-            put_image(PIL.Image.open("24.png"), format="png", title='24 games', width="100", height="100").onclick(
-                self.to_24).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
-        ], size=10)
-        put_image(PIL.Image.open("white.png"),
-                  format="png", width="10", height="10")
-        put_row([
-            put_text("24 games"),
-        ], size=10)
-        put_image(PIL.Image.open("white.png"),
-                  format="png", width="10", height="200")
-        put_text("Stand by for Titanfall!").onclick(self.tf)
+    put_image(PIL.Image.open("white.png"),
+              format="png", width="10", height="10")
+    put_row([
+        put_text("Tournament"),
+        put_text("Training"),
+    ], size=10)
 
 
+#Main menu page
+def ignore():
+    pass
+
+def to_24():
+    clear()
+    start_select_24_game()
+
+def to_signin():
+    clear()
+    start_signin()
+
+def tf():
+    run_js("open('https://www.youtube.com/watch?v=j7niWUth9_Y');")
+
+def blank():
+    run_js("open('https://r.honeygain.me/PROOV41FC7');")
+
+def run_menu():
+    if getcookie("nickname") == "Guest":
+        text = 'sign in'
+    else:
+        text = 'signed in as {0}'.format(getcookie("nickname"))
+    put_row([
+        put_image(PIL.Image.open("cover.png"), format="png"),
+        put_button(text, onclick=to_signin),
+
+    ], size=10)
+    put_row([
+        put_image(PIL.Image.open("24.png"), format="png", title='24 games', width="100", height="100").onclick(
+            to_24).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+    ], size=10)
+    put_image(PIL.Image.open("white.png"),
+              format="png", width="10", height="10")
+    put_row([
+        put_text("24 games"),
+    ], size=10)
+    put_image(PIL.Image.open("white.png"),
+              format="png", width="10", height="200")
+    put_text("Stand by for Titanfall!").onclick(tf)
+    put_text(" ").onclick(blank)
+
+
+#setting up account manager
 account_manager = Account_Manager()
 
 # with open("info.txt","wb") as info:
@@ -185,23 +185,19 @@ def getcookie(key):
 
 
 def start_main_menu():
-    main_menu = Main_Menu()
-    main_menu.run()
+    run_menu()
 
 
 def start_select_24_game():
-    select_24_game = Select_24_game()
-    select_24_game.run()
+    run_select_24_game()
 
 
 def start_signin():
-    login_screen = login_Screen()
-    login_screen.run_login()
+    run_login()
 
 
 def start_train_24():
-    train_24 = T_24()
-    train_24.run_train()
+    run_train()
 
 
 def _start_server():

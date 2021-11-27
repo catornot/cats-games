@@ -175,6 +175,10 @@ account_manager = Account_Manager()
 # with open("info.txt","wb") as info:
 #     pickle.dump({},info)
 
+def playsound(url):
+    run_js('''var audio = new Audio(url);
+        audio.play();''',url = url)
+
 
 def setcookie(key, value, days=0):
     run_js("setCookie(key, value, days)", key=key, value=value, days=days)

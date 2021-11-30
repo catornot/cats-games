@@ -10,6 +10,8 @@ import sys
 import pickle
 import base64
 import re
+import ast
+import time
 from Algorithm24 import solve, get_random
 
 try:
@@ -96,47 +98,117 @@ def run_signup():
 
 
 #training page
-def run_train():
-    h = get_random()
+def restart_training():
+    run_training()
 
+def run_training():
+    put_text("Getting a problem ready")
 
-#selector for 24 games
-def to_tournement():
-    pass
+    iteration = 0
+    Continue = True
+    while Continue:
+        iteration += 1
+        result = get_random()
+        print(result)
+        if eval(result[0]) == 24:
+            clear()
+            Continue = False
+        elif iteration > 100:
+            clear()
+            put_error("Nothing found : NotImplementedError")
+            raise NotImplementedError
+    Time = time.time()
+    put_row([
+        put_markdown(r""" # 24 game
+            Use operators **+, -, / and \*** and numbers **{0}, {1}, {2} and {3}** to get the number 24.
+            **You can only use each number once.**
+              
+        """.format(result[1][0],result[1][1],result[1][2],result[1][3]), lstrip=True),
+        put_button("back", onclick=to_menu),
 
-def to_traning():
+    ], size=10)
+
+    iteration = 0
+    Continue = True
+    prev_value = ""
+    while Continue:
+        iteration += 1
+
+        prev_value = answer2 = answer = input('Input your answer', validate=validate_expression,value = prev_value)
+
+        for x in ["(",")","*","/","+","-"]:
+            answer2 = answer2.replace(x,"")
+
+        valid = True
+        for i in result[1]:
+
+            if not str(i) in list(answer2) and valid:
+                valid = False
+                put_warning("does not contain all required numbers.", closable=True)
+
+            try:
+                e = list(answer2)
+                e.pop(list(answer2).index(str(i)))
+
+                if str(i) in e and valid:
+                    print(1)
+                    valid = False
+                    put_warning("contains duplicate required numbers.", closable=True)
+
+            except ValueError:
+                pass
+
+        if valid:
+            tree = ast.parse(answer, mode='eval')
+            result2 = eval(compile(tree, filename='', mode='eval'))
+
+            if result2 == 24:    
+                Continue = False
+            else:
+                put_warning("Doesn't equal to 24", closable=True)
+
+        elif iteration > 100:
+            put_warning("{0}, You are incapable!".format(getcookie("nickname")), closable=True)
+            run_js("location.reload(true);")
+
     clear()
-    start_train_24()
 
-def run_select_24_game():
-    put_image(PIL.Image.open("white.png"),
-              format="png", width="100", height="100")
-    put_row([
-        put_image(PIL.Image.open("24_t.png"), format="png", title='', width="100", height="100").onclick(
-            to_tournement).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
-        put_image(PIL.Image.open("24_training.png"), format="png", title='', width="100", height="100").onclick(
-            to_traning).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
-    ], size=10)
+    put_markdown(r""" # Your did it!
+        You found how to get the number 24 out of **{0}, {1}, {2} and {3}**.
+        It took you {4} sec
+          
+    """.format(result[1][0],result[1][1],result[1][2],result[1][3],time.time() - Time), lstrip=True)
+        
+    put_button("Continue", onclick=restart_training)
 
-    put_image(PIL.Image.open("white.png"),
-              format="png", width="10", height="10")
-    put_row([
-        put_text("Tournament"),
-        put_text("Training"),
-    ], size=10)
+
+
+
+def validate_expression(expression):
+    try:
+       tree  = ast.parse(expression, mode='eval')
+    except SyntaxError:
+        return "Not a Python expression"
+    if not all(isinstance(node, (ast.Expression,
+            ast.UnaryOp, ast.unaryop,
+            ast.BinOp, ast.operator,
+            ast.Num)) for node in ast.walk(tree)):
+        return "not a mathematical expression (numbers and operators)"
 
 
 #Main menu page
+def to_tournement():
+    put_warning("it will come", closable=True)
+
+def to_traning():
+    clear()
+    run_training()
+
 def ignore():
     pass
 
-def to_24():
-    clear()
-    start_select_24_game()
-
 def to_signin():
-    clear()
-    start_signin()
+    to_login()
 
 def tf():
     run_js("open('https://www.youtube.com/watch?v=j7niWUth9_Y');")
@@ -149,22 +221,30 @@ def run_menu():
         text = 'sign in'
     else:
         text = 'signed in as {0}'.format(getcookie("nickname"))
+
     put_row([
         put_image(PIL.Image.open("cover.png"), format="png"),
         put_button(text, onclick=to_signin),
 
     ], size=10)
     put_row([
-        put_image(PIL.Image.open("24.png"), format="png", title='24 games', width="100", height="100").onclick(
-            to_24).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+        put_image(PIL.Image.open("24_t.png"), format="png", title='', width="100", height="100").onclick(
+            to_tournement).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+        put_image(PIL.Image.open("24_training.png"), format="png", title='', width="100", height="100").onclick(
+            to_traning).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
     ], size=10)
+
     put_image(PIL.Image.open("white.png"),
               format="png", width="10", height="10")
+
     put_row([
-        put_text("24 games"),
+        put_text("Tournament"),
+        put_text("Training"),
     ], size=10)
+
     put_image(PIL.Image.open("white.png"),
               format="png", width="10", height="200")
+
     put_text("Stand by for Titanfall!").onclick(tf)
     put_text(" ").onclick(blank)
 
@@ -186,22 +266,6 @@ def setcookie(key, value, days=0):
 
 def getcookie(key):
     return eval_js("getCookie(key)", key=key)
-
-
-def start_main_menu():
-    run_menu()
-
-
-def start_select_24_game():
-    run_select_24_game()
-
-
-def start_signin():
-    run_login()
-
-
-def start_train_24():
-    run_train()
 
 
 def _start_server():
@@ -233,7 +297,7 @@ def _start_server():
         print("no account found :{0}".format(getcookie("nickname")))
         setcookie("nickname", "Guest", days=0.1)
 
-    start_main_menu()
+    run_menu()
 
 
 if __name__ == '__main__':

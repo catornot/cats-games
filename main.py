@@ -1,6 +1,6 @@
 from pywebio.output import *
 from pywebio.input import *
-from pywebio.session import set_env, run_js, eval_js
+from pywebio.session import set_env, run_js, eval_js, go_app
 from pywebio import start_server
 from pywebio.output import output as output
 
@@ -297,8 +297,8 @@ def _start_server():
         print("no account found :{0}".format(getcookie("nickname")))
         setcookie("nickname", "Guest", days=0.1)
 
-    run_menu()
+    go_app('menu',False)
 
 
 if __name__ == '__main__':
-    start_server(_start_server, port=port)
+    start_server({"index":_start_server,"menu":run_menu}, port=port)

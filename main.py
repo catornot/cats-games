@@ -75,13 +75,9 @@ def to_signup():
 def to_login():
     clear()
     run_login()
-
-def to_menu():
-    run_js("location.reload(true);")
-
 def run_login():
-    put_markdown("No account?, Sign up!").onclick(to_signup)
-    put_markdown("Back").onclick(to_menu)
+    put_markdown("**No account?, Sign up!**").onclick(to_signup)
+    put_link('Back', app='menu')
     data = input_group("Sign in", [
         input('Input your nickname', name='nickname'),
         input('Input your password', name='password', type=PASSWORD),
@@ -98,9 +94,6 @@ def run_signup():
 
 
 #training page
-def restart_training():
-    run_training()
-
 def run_training():
     put_text("Getting a problem ready")
 
@@ -124,7 +117,7 @@ def run_training():
             **You can only use each number once.**
               
         """.format(result[1][0],result[1][1],result[1][2],result[1][3]), lstrip=True),
-        put_button("back", onclick=to_menu),
+        put_button("back", onclick=lambda: go_app('menu',False)),
 
     ], size=10)
 
@@ -179,7 +172,7 @@ def run_training():
           
     """.format(result[1][0],result[1][1],result[1][2],result[1][3],time.time() - Time), lstrip=True)
         
-    put_button("Continue", onclick=restart_training)
+    put_button("Continue", onclick=lambda: go_app('training'))
 
 
 
@@ -301,4 +294,4 @@ def _start_server():
 
 
 if __name__ == '__main__':
-    start_server({"index":_start_server,"menu":run_menu}, port=port)
+    start_server({"index":_start_server,"menu":run_menu,"training":run_training}, port=port)

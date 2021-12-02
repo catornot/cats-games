@@ -12,6 +12,8 @@ import base64
 import re
 import ast
 import time
+import requests
+import json
 from Algorithm24 import solve, get_random
 
 try:
@@ -190,22 +192,6 @@ def validate_expression(expression):
 
 
 #Main menu page
-def to_tournement():
-    put_warning("it will come", closable=True)
-
-def to_traning():
-    clear()
-    run_training()
-
-def ignore():
-    pass
-
-def to_signin():
-    to_login()
-
-def tf():
-    run_js("open('https://www.youtube.com/watch?v=j7niWUth9_Y');")
-
 def blank():
     run_js("open('https://r.honeygain.me/PROOV41FC7');")
 
@@ -217,14 +203,16 @@ def run_menu():
 
     put_row([
         put_image(PIL.Image.open("cover.png"), format="png"),
-        put_button(text, onclick=to_signin),
+        put_button(text, onclick=lambda: go_app('signin',False)),
 
     ], size=10)
     put_row([
         put_image(PIL.Image.open("24_t.png"), format="png", title='', width="100", height="100").onclick(
-            to_tournement).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+            lambda: put_warning("it will come", closable=True) ).style(
+            "outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
         put_image(PIL.Image.open("24_training.png"), format="png", title='', width="100", height="100").onclick(
-            to_traning).style("outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
+            lambda: go_app('training',False) ).style(
+            "outline: 4px solid #e73;outline-offset: 4px;background: #ffa"),
     ], size=10)
 
     put_image(PIL.Image.open("white.png"),
@@ -238,8 +226,30 @@ def run_menu():
     put_image(PIL.Image.open("white.png"),
               format="png", width="10", height="200")
 
-    put_text("Stand by for Titanfall!").onclick(tf)
-    put_text(" ").onclick(blank)
+    put_link('visit vex\'s leaderboard of advent of code', app='api')
+    put_text("")
+    put_link(("Stand by for Titanfall!"), url='https://www.youtube.com/watch?v=j7niWUth9_Y',new_window = True)
+    put_text("ad").onclick(blank)
+
+#vex leaderboard for https://adventofcode.com/2021
+def adventofcode():
+    s = requests.Session()
+    r = s.get('https://adventofcode.com/2021/leaderboard/private/view/1516691.json',cookies = {"session":"53616c7465645f5f90c07871a62bad84e0e7431b2f06b65e3c5983b16b61306edd0eb2e5e9d2338e6c1d1d8f1ea6a825"})
+    Json = r.json()
+    output_list = [[span('Name',row=1), span('score', col=1)]]
+
+    for x in Json["members"].keys():
+        output_list.append(
+            [
+            Json["members"][x]["name"],
+            Json["members"][x]["local_score"],
+            ]
+        )
+
+
+    put_table(output_list)
+    # put_text(json.dumps(Json,indent=4, sort_keys=True))
+
 
 
 #setting up account manager
@@ -294,4 +304,4 @@ def _start_server():
 
 
 if __name__ == '__main__':
-    start_server({"index":_start_server,"menu":run_menu,"training":run_training}, port=port)
+    start_server({"index":_start_server,"menu":run_menu,"training":run_training,"signin":run_login,"api":adventofcode}, port=port)

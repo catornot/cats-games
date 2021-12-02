@@ -1,2 +1,3 @@
 pywebio
 pillow
+requests

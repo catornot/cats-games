@@ -246,8 +246,11 @@ def adventofcode():
             ]
         )
 
+    put_row([
+        put_table(output_list),
+        put_button("back", onclick=lambda: go_app('menu',False)),
 
-    put_table(output_list)
+    ], size=10)
     # put_text(json.dumps(Json,indent=4, sort_keys=True))
 
 

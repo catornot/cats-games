@@ -226,7 +226,7 @@ def run_menu():
     put_image(PIL.Image.open("white.png"),
               format="png", width="10", height="200")
 
-    put_link('visit vex\'s leaderboard of advent of code', app='api')
+    put_link('visit a private leaderboard of advent of code', app='leaderboard')
     put_text("")
     put_link(("Stand by for Titanfall!"), url='https://www.youtube.com/watch?v=j7niWUth9_Y',new_window = True)
     put_text("ad").onclick(blank)
@@ -307,4 +307,4 @@ def _start_server():
 
 
 if __name__ == '__main__':
-    start_server({"index":_start_server,"menu":run_menu,"training":run_training,"signin":run_login,"api":adventofcode}, port=port)
+    start_server({"index":_start_server,"menu":run_menu,"training":run_training,"signin":run_login,"leaderboard":adventofcode}, port=port)

@@ -174,7 +174,7 @@ def run_training():
           
     """.format(result[1][0],result[1][1],result[1][2],result[1][3],time.time() - Time), lstrip=True)
         
-    put_button("Continue", onclick=lambda: go_app('training'))
+    put_button("Continue", onclick=lambda: go_app('training',False))
 
 
 

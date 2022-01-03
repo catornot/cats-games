@@ -137,9 +137,9 @@ def run_training():
         valid = True
         for i in result[1]:
 
-            if not str(i) in list(answer2) and valid:
-                valid = False
-                put_warning("does not contain all required numbers.", closable=True)
+            #if not str(i) in list(answer2) and valid:
+            #    valid = False
+            #    put_warning("does not contain all required numbers.", closable=True)
 
             try:
                 e = list(answer2)
@@ -226,7 +226,7 @@ def run_menu():
     put_image(PIL.Image.open("white.png"),
               format="png", width="10", height="200")
 
-    put_link('visit a private leaderboard of advent of code', app='leaderboard')
+    #put_link('visit a private leaderboard of advent of code', app='leaderboard')
     put_text("")
     put_link(("Stand by for Titanfall!"), url='https://www.youtube.com/watch?v=j7niWUth9_Y',new_window = True)
     put_text("ad").onclick(blank)
